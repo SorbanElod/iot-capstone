@@ -30,7 +30,7 @@ export default function Sidebar({ activeTab, setActiveTab, apiUrl, setApiUrl }) 
             activeTab === 'alerts' ? 'bg-blue-700' : 'hover:bg-blue-500'
           }`}
         >
-          <AlertTriangle size={20} /> Szabályok
+          <AlertTriangle size={20} /> Szabályok & Riasztások
         </button>
       </nav>
 
