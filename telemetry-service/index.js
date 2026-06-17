@@ -29,19 +29,6 @@ pool
   .then(() => console.log("PostgreSQL: metrics tábla ellenőrizve/létrehozva."))
   .catch((err) => console.error("Hiba a tábla létrehozásakor:", err));
 
-// Rule Engine
-try {
-  await fetch("http://rule-app-service:80/api/evaluate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ device_id, temperature, humidity }),
-  });
-} catch (ruleErr) {
-  console.error("Nem sikerült elérni a Rule Engine-t:", ruleErr.message);
-}
-
-res.status(201).json(result.rows[0]);
-
 // API Végpont: Új mérési adat mentése
 app.post("/api/telemetry", async (req, res) => {
   const { device_id, temperature, humidity } = req.body;
@@ -50,6 +37,16 @@ app.post("/api/telemetry", async (req, res) => {
       "INSERT INTO metrics (device_id, temperature, humidity) VALUES ($1, $2, $3) RETURNING *",
       [device_id, temperature, humidity],
     );
+    // Rule Engine
+    try {
+      await fetch("http://rule-app-service:80/api/evaluate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ device_id, temperature, humidity }),
+      });
+    } catch (ruleErr) {
+      console.error("Nem sikerült elérni a Rule Engine-t:", ruleErr.message);
+    }
     res.status(201).json(result.rows[0]);
   } catch (error) {
     res
