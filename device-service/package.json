@@ -1,13 +1,12 @@
 {
   "name": "iot-device-service",
   "version": "1.0.0",
-  "description": "IoT Device Registry Microservice",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
     "express": "^4.19.2",
-    "mongoose": "^8.3.2"
+    "pg": "^8.11.5"
   }
 }

@@ -1,13 +1,12 @@
 {
     "name": "iot-telemetry-service",
     "version": "1.0.0",
-    "description": "IoT Telemetry Data Microservice",
     "main": "index.js",
     "scripts": {
         "start": "node index.js"
     },
     "dependencies": {
         "express": "^4.19.2",
-        "pg": "^8.11.5"
+        "mongoose": "^8.3.2"
     }
 }

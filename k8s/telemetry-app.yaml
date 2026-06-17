@@ -1,13 +1,44 @@
-# 1. Olvasható konfiguráció
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: telemetry-app-config
 data:
   PORT: "3001"
-
 ---
-# 2. A Te Telemetry Alkalmazásod (Deployment)
+# === TELEMETRY ADATBÁZIS (MONGODB) ===
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telemetry-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telemetry-db
+  template:
+    metadata:
+      labels:
+        app: telemetry-db
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:6.0
+        ports:
+        - containerPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: telemetry-db-service
+spec:
+  selector:
+    app: telemetry-db
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+---
+# === TELEMETRY SERVICE (NODE.JS) ===
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,6 +56,7 @@ spec:
       containers:
       - name: telemetry-service
         image: selod/iot-telemetry-service:latest
+        imagePullPolicy: Always   # <--- GARANTÁLJA A FRISSÜLÉST
         ports:
         - containerPort: 3001
         env:
@@ -33,20 +65,9 @@ spec:
             configMapKeyRef:
               name: telemetry-app-config
               key: PORT
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: telemetry-db-secret
-              key: DATABASE_URL
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 3001
-          initialDelaySeconds: 10
-          periodSeconds: 10
-
+        - name: MONGO_URI
+          value: "mongodb://telemetry-db-service:27017/telemetry_db"
 ---
-# 3. Alkalmazás Belső Hálózat (Service)
 apiVersion: v1
 kind: Service
 metadata:
@@ -58,10 +79,7 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3001
-  type: ClusterIP
-
 ---
-# 4. Külvilág felé nyitás (Ingress a /api/telemetry útvonalra)
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
