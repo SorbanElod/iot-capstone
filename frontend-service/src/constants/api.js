@@ -8,4 +8,4 @@ export const API_ENDPOINTS = {
 
 // Default API configuration
 export const DEFAULT_API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:3000";
+  import.meta.env.VITE_API_URL || "http://167.233.130.203/";

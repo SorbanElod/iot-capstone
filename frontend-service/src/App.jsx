@@ -7,7 +7,7 @@ import ErrorAlert from './components/ErrorAlert';
 
 export default function App() {
   // Állapotok (State)
-  const apiUrl = "http://167.233.130.203/"; // API szerver URL-je
+  const apiUrl = import.meta.env.VITE_API_URL || "http://167.233.130.203/";
   const [activeTab, setActiveTab] = useState('devices');
   
   // Adatok
@@ -18,7 +18,7 @@ export default function App() {
   const [selectedDevice, setSelectedDevice] = useState('');
 
   // Űrlap állapotok
-  const [newDevice, setNewDevice] = useState({ device_id: '', name: '', location: '' });
+  const [newDevice, setNewDevice] = useState({ device_id: '', name: '', room: '' });
   const [newMetric, setNewMetric] = useState({ temperature: 20, humidity: 50 });
   const [newLimit, setNewLimit] = useState(30);
 
@@ -77,7 +77,7 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...newDevice, type: 'temperature' })
       });
-      setNewDevice({ device_id: '', name: '', location: '' });
+      setNewDevice({ device_id: '', name: '', room: '' });
       fetchDevices();
     } catch { setError('Hiba az eszköz hozzáadásakor'); }
   };

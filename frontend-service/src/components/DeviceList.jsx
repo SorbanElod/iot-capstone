@@ -85,13 +85,13 @@ export default function DeviceList({
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">
-                Helyszín
+                Szoba
               </label>
               <input
                 required
                 type="text"
-                value={newDevice.location}
-                onChange={(e) => setNewDevice({ ...newDevice, location: e.target.value })}
+                value={newDevice.room}
+                onChange={(e) => setNewDevice({ ...newDevice, room: e.target.value })}
                 className="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
                 placeholder="pl. Konyha"
               />
