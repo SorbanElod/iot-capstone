@@ -8,7 +8,7 @@ export default function DeviceList({
   handleAddDevice
 }) {
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in w-full">
       <h2 className="text-3xl font-bold text-slate-800 mb-6 flex items-center justify-between">
         Regisztrált Eszközök
         <button 

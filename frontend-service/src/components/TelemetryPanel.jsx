@@ -11,7 +11,7 @@ export default function TelemetryPanel({
   handleSendMetric
 }) {
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in w-full">
       <h2 className="text-3xl font-bold text-slate-800 mb-6">Telemetria Szimulátor</h2>
       
       {/* Device selector */}

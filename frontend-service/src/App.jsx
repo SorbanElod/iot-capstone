@@ -109,7 +109,7 @@ export default function App() {
   }; 
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-800 flex flex-row">
+    <div className="min-h-screen w-full bg-gray-50 font-sans text-gray-800 flex flex-row">
       {/* Sidebar Component */}
       <Sidebar 
         activeTab={activeTab}
@@ -119,7 +119,7 @@ export default function App() {
       />
 
       {/* Fő tartalom */}
-      <div className="flex-1 p-8 overflow-y-auto max-h-screen">
+      <div className="flex-1 min-w-0 w-full p-8 overflow-y-auto max-h-screen">
         {/* Error Alert Component */}
         {error && (
           <ErrorAlert 

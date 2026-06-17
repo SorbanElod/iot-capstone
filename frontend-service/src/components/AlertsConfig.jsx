@@ -9,7 +9,7 @@ export default function AlertsConfig({
   handleUpdateLimit
 }) {
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in w-full">
       <h2 className="text-3xl font-bold text-slate-800 mb-6">Szabálymotor & Riasztások</h2>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
