@@ -7,7 +7,7 @@ import ErrorAlert from './components/ErrorAlert';
 
 export default function App() {
   // Állapotok (State)
-  const [apiUrl, setApiUrl] = useState('http://116.203.x.x');
+  const apiUrl = "http://167.233.130.203/"; // API szerver URL-je
   const [activeTab, setActiveTab] = useState('devices');
   
   // Adatok
@@ -55,7 +55,7 @@ export default function App() {
   // Kezdeti betöltés
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    if (apiUrl !== 'http://116.203.x.x') {
+    if (apiUrl) {
       fetchDevices();
       fetchAlertsAndRules();
     }
@@ -114,8 +114,6 @@ export default function App() {
       <Sidebar 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        apiUrl={apiUrl}
-        setApiUrl={setApiUrl}
       />
 
       {/* Fő tartalom */}
