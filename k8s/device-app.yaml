@@ -19,7 +19,7 @@ spec:
         ports:
         - containerPort: 3000
         env:
-        # EZ HIÁNYZOTT! Enélkül a pg modul elszállt.
+        # Ez köti össze a Node.js-t a futó Postgres adatbázissal!
         - name: DATABASE_URL
           value: "postgresql://postgres:postgres@device-db-service:5432/device_db"
         - name: PORT
