@@ -24,8 +24,8 @@ spec:
     spec:
       containers:
       - name: device-service
-        # Itt már a te általad feltöltött image-et használjuk!
-        image: SorbanElod/iot-device-service:v1
+        # Kijavítva a te pontos Docker Hub felhasználónevedre!
+        image: selod/iot-device-service:v1
         ports:
         - containerPort: 3000
         env:
