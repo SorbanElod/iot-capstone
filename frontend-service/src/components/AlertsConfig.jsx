@@ -1,61 +1,13 @@
-import { useState, useEffect } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
-import { API_ENDPOINTS } from '../constants/api';
-import { useFetch } from '../hooks/useFetch';
 
-export const AlertsConfig = ({ apiUrl, setError }) => {
-  const [alerts, setAlerts] = useState([]);
-  const [limit, setLimit] = useState(30);
-  const [newLimit, setNewLimit] = useState(30);
-  const { fetchData } = useFetch(apiUrl, setError);
-
-  const fetchAlertsAndRules = async () => {
-    try {
-      // Fetch rules
-      const rulesData = await fetchData(API_ENDPOINTS.RULES);
-      if (rulesData && rulesData.temperature_limit) {
-        setLimit(rulesData.temperature_limit);
-        setNewLimit(rulesData.temperature_limit);
-      }
-
-      // Fetch alerts
-      const alertsData = await fetchData(API_ENDPOINTS.ALERTS);
-      if (alertsData) {
-        setAlerts(Array.isArray(alertsData) ? alertsData : []);
-      }
-    } catch (err) {
-      console.error('Error fetching alerts and rules:', err);
-    }
-  };
-
-  // Fetch on component mount
-  useEffect(() => {
-    fetchAlertsAndRules();
-  }, [apiUrl]);
-
-  const handleUpdateLimit = async (e) => {
-    e.preventDefault();
-    
-    // Validation
-    if (isNaN(newLimit) || newLimit < 0) {
-      setError('Kérlek, adj meg egy érvényes hőmérsékleti értéket!');
-      return;
-    }
-
-    try {
-      const result = await fetchData(API_ENDPOINTS.RULES, {
-        method: 'POST',
-        body: JSON.stringify({ temperature_limit: parseFloat(newLimit) }),
-      });
-
-      if (result) {
-        await fetchAlertsAndRules();
-      }
-    } catch (err) {
-      setError('Hiba a szabály frissítésekor');
-    }
-  };
-
+export default function AlertsConfig({
+  limit,
+  newLimit,
+  setNewLimit,
+  alerts,
+  fetchAlertsAndRules,
+  handleUpdateLimit
+}) {
   return (
     <div className="animate-fade-in">
       <h2 className="text-3xl font-bold text-slate-800 mb-6">Szabálymotor & Riasztások</h2>
@@ -130,4 +82,4 @@ export const AlertsConfig = ({ apiUrl, setError }) => {
       </div>
     </div>
   );
-};
+}

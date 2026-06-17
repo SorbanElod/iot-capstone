@@ -1,52 +1,15 @@
-import { useState, useEffect } from 'react';
 import { Thermometer, Droplets, RefreshCw } from 'lucide-react';
-import { API_ENDPOINTS } from '../constants/api';
-import { useFetch } from '../hooks/useFetch';
 
-export const TelemetryPanel = ({ apiUrl, devices, setError }) => {
-  const [selectedDevice, setSelectedDevice] = useState('');
-  const [metrics, setMetrics] = useState([]);
-  const [newMetric, setNewMetric] = useState({ temperature: 20, humidity: 50 });
-  const { fetchData } = useFetch(apiUrl, setError);
-
-  const fetchMetrics = async (deviceId) => {
-    if (!deviceId) return;
-    
-    const data = await fetchData(`${API_ENDPOINTS.TELEMETRY}/${deviceId}`);
-    if (data) {
-      setMetrics(Array.isArray(data) ? data : []);
-    }
-  };
-
-  // Fetch metrics when selected device changes
-  useEffect(() => {
-    if (selectedDevice) {
-      fetchMetrics(selectedDevice);
-    }
-  }, [selectedDevice, apiUrl]);
-
-  const handleSendMetric = async (e) => {
-    e.preventDefault();
-    
-    if (!selectedDevice) {
-      setError('Válassz ki egy eszközt!');
-      return;
-    }
-
-    try {
-      const result = await fetchData(API_ENDPOINTS.TELEMETRY, {
-        method: 'POST',
-        body: JSON.stringify({ device_id: selectedDevice, ...newMetric }),
-      });
-
-      if (result) {
-        await fetchMetrics(selectedDevice);
-      }
-    } catch (err) {
-      setError('Hiba a mérés beküldésekor');
-    }
-  };
-
+export default function TelemetryPanel({
+  devices,
+  selectedDevice,
+  setSelectedDevice,
+  newMetric,
+  setNewMetric,
+  metrics,
+  fetchMetrics,
+  handleSendMetric
+}) {
   return (
     <div className="animate-fade-in">
       <h2 className="text-3xl font-bold text-slate-800 mb-6">Telemetria Szimulátor</h2>
@@ -147,4 +110,4 @@ export const TelemetryPanel = ({ apiUrl, devices, setError }) => {
       )}
     </div>
   );
-};
+}

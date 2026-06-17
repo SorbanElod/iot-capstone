@@ -1,8 +1,8 @@
 import { Activity, Server, AlertTriangle } from 'lucide-react';
 
-export const Sidebar = ({ activeTab, setActiveTab, apiUrl, setApiUrl }) => {
+export default function Sidebar({ activeTab, setActiveTab, apiUrl, setApiUrl }) {
   return (
-    <div className="w-full md:w-64 bg-slate-900 text-white p-6 flex flex-col shadow-xl z-10">
+    <div className="w-64 bg-indigo-900 text-white p-6 flex flex-col shadow-xl flex-shrink-0">
       <h1 className="text-2xl font-bold mb-8 flex items-center gap-2">
         <Activity className="text-blue-400" /> IoT Panel
       </h1>
@@ -11,7 +11,7 @@ export const Sidebar = ({ activeTab, setActiveTab, apiUrl, setApiUrl }) => {
         <button
           onClick={() => setActiveTab('devices')}
           className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-            activeTab === 'devices' ? 'bg-blue-600' : 'hover:bg-slate-800'
+            activeTab === 'devices' ? 'bg-blue-700' : 'hover:bg-blue-500'
           }`}
         >
           <Server size={20} /> Eszközök
@@ -19,7 +19,7 @@ export const Sidebar = ({ activeTab, setActiveTab, apiUrl, setApiUrl }) => {
         <button
           onClick={() => setActiveTab('telemetry')}
           className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-            activeTab === 'telemetry' ? 'bg-blue-600' : 'hover:bg-slate-800'
+            activeTab === 'telemetry' ? 'bg-blue-700' : 'hover:bg-blue-500'
           }`}
         >
           <Activity size={20} /> Telemetria
@@ -27,10 +27,10 @@ export const Sidebar = ({ activeTab, setActiveTab, apiUrl, setApiUrl }) => {
         <button
           onClick={() => setActiveTab('alerts')}
           className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-            activeTab === 'alerts' ? 'bg-blue-600' : 'hover:bg-slate-800'
+            activeTab === 'alerts' ? 'bg-blue-700' : 'hover:bg-blue-500'
           }`}
         >
-          <AlertTriangle size={20} /> Riasztások
+          <AlertTriangle size={20} /> Szabályok & Riasztások
         </button>
       </nav>
 
@@ -48,4 +48,5 @@ export const Sidebar = ({ activeTab, setActiveTab, apiUrl, setApiUrl }) => {
       </div>
     </div>
   );
-};
+}
+

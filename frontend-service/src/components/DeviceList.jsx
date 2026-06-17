@@ -1,36 +1,12 @@
-import { useState } from 'react';
 import { Plus, RefreshCw } from 'lucide-react';
-import { API_ENDPOINTS } from '../constants/api';
-import { useFetch } from '../hooks/useFetch';
 
-export const DeviceList = ({ apiUrl, devices, fetchDevices, setError }) => {
-  const [newDevice, setNewDevice] = useState({ device_id: '', name: '', location: '' });
-  const { fetchData } = useFetch(apiUrl, setError);
-
-  const handleAddDevice = async (e) => {
-    e.preventDefault();
-    
-    // Validation
-    if (!newDevice.device_id.trim() || !newDevice.name.trim() || !newDevice.location.trim()) {
-      setError('Minden mező kitöltése kötelező!');
-      return;
-    }
-
-    try {
-      const result = await fetchData(API_ENDPOINTS.DEVICES, {
-        method: 'POST',
-        body: JSON.stringify({ ...newDevice, type: 'temperature' }),
-      });
-
-      if (result) {
-        setNewDevice({ device_id: '', name: '', location: '' });
-        await fetchDevices();
-      }
-    } catch (err) {
-      setError('Hiba az eszköz hozzáadásakor');
-    }
-  };
-
+export default function DeviceList({ 
+  devices, 
+  fetchDevices,
+  newDevice,
+  setNewDevice,
+  handleAddDevice
+}) {
   return (
     <div className="animate-fade-in">
       <h2 className="text-3xl font-bold text-slate-800 mb-6 flex items-center justify-between">
@@ -120,8 +96,8 @@ export const DeviceList = ({ apiUrl, devices, fetchDevices, setError }) => {
                 placeholder="pl. Konyha"
               />
             </div>
-            <button
-              type="submit"
+            <button 
+              type="submit" 
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
             >
               Regisztrálás
@@ -131,4 +107,4 @@ export const DeviceList = ({ apiUrl, devices, fetchDevices, setError }) => {
       </div>
     </div>
   );
-};
+}
