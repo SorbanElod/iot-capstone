@@ -7,7 +7,7 @@ import ErrorAlert from './components/ErrorAlert';
 
 export default function App() {
   // Állapotok (State)
-  const apiUrl = import.meta.env.VITE_API_URL || "http://167.233.130.203/";
+  const apiUrl = "http://167.233.130.203/";
   const [activeTab, setActiveTab] = useState('devices');
   
   // Adatok
