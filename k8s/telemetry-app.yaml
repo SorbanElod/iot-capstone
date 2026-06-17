@@ -1,48 +1,7 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: telemetry-app-config
-data:
-  PORT: "3001"
----
-# === TELEMETRY ADATBÁZIS (MONGODB) ===
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: telemetry-db-deployment
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: telemetry-db
-  template:
-    metadata:
-      labels:
-        app: telemetry-db
-    spec:
-      containers:
-      - name: mongo
-        image: mongo:6.0
-        ports:
-        - containerPort: 27017
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: telemetry-db-service
-spec:
-  selector:
-    app: telemetry-db
-  ports:
-    - protocol: TCP
-      port: 27017
-      targetPort: 27017
----
-# === TELEMETRY SERVICE (NODE.JS) ===
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: telemetry-app-deployment
+  name: telemetry-service-deployment
 spec:
   replicas: 1
   selector:
@@ -56,17 +15,20 @@ spec:
       containers:
       - name: telemetry-service
         image: selod/iot-telemetry-service:latest
-        imagePullPolicy: Always   # <--- GARANTÁLJA A FRISSÜLÉST
+        imagePullPolicy: Always
         ports:
         - containerPort: 3001
         env:
-        - name: PORT
-          valueFrom:
-            configMapKeyRef:
-              name: telemetry-app-config
-              key: PORT
         - name: MONGO_URI
           value: "mongodb://telemetry-db-service:27017/telemetry_db"
+        - name: PORT
+          value: "3001"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
@@ -79,20 +41,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3001
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: telemetry-ingress
-spec:
-  ingressClassName: traefik
-  rules:
-  - http:
-      paths:
-      - path: /api/telemetry
-        pathType: Prefix
-        backend:
-          service:
-            name: telemetry-app-service
-            port:
-              number: 80
+  type: ClusterIP

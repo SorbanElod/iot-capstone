@@ -1,55 +1,7 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: device-app-config
-data:
-  PORT: "3000"
----
-# === DEVICE ADATBÁZIS (POSTGRESQL) ===
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: device-db-deployment
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: device-db
-  template:
-    metadata:
-      labels:
-        app: device-db
-    spec:
-      containers:
-      - name: postgres
-        image: postgres:15-alpine
-        env:
-        - name: POSTGRES_USER
-          value: postgres
-        - name: POSTGRES_PASSWORD
-          value: postgres
-        - name: POSTGRES_DB
-          value: device_db
-        ports:
-        - containerPort: 5432
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: device-db-service
-spec:
-  selector:
-    app: device-db
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
----
-# === DEVICE SERVICE (NODE.JS) ===
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: device-app-deployment
+  name: device-service-deployment
 spec:
   replicas: 1
   selector:
@@ -63,17 +15,21 @@ spec:
       containers:
       - name: device-service
         image: selod/iot-device-service:latest
-        imagePullPolicy: Always   # <--- GARANTÁLJA A FRISSÜLÉST
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
         env:
-        - name: PORT
-          valueFrom:
-            configMapKeyRef:
-              name: device-app-config
-              key: PORT
+        # EZ HIÁNYZOTT! Enélkül a pg modul elszállt.
         - name: DATABASE_URL
           value: "postgresql://postgres:postgres@device-db-service:5432/device_db"
+        - name: PORT
+          value: "3000"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
@@ -86,20 +42,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3000
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: device-ingress
-spec:
-  ingressClassName: traefik
-  rules:
-  - http:
-      paths:
-      - path: /api/devices
-        pathType: Prefix
-        backend:
-          service:
-            name: device-app-service
-            port:
-              number: 80
+  type: ClusterIP
