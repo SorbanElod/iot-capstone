@@ -25,7 +25,7 @@ spec:
       containers:
       - name: device-service
         # Kijavítva a te pontos Docker Hub felhasználónevedre!
-        image: selod/iot-device-service:v1
+        image: selod/iot-device-service:latest
         ports:
         - containerPort: 3000
         env:

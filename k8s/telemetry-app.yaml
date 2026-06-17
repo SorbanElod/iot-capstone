@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: telemetry-service
-        image: selod/iot-telemetry-service:v1
+        image: selod/iot-telemetry-service:latest
         ports:
         - containerPort: 3001
         env:

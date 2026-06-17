@@ -1,0 +1,64 @@
+name: IoT Capstone CI/CD
+
+# Ez mondja meg, hogy mikor fusson le a pipeline (amikor pusholsz a main ágra)
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Letölti a kódodat a GitHub Actions szerverére
+      - name: Kód letöltése
+        uses: actions/checkout@v4
+
+      # 2. Bejelentkezik a Docker Hub-ra
+      - name: Bejelentkezés a Docker Hub-ra
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 3. Beállítja a multi-architetúra (AMD64) buildelést
+      - name: Docker Buildx beállítása
+        uses: docker/setup-buildx-action@v3
+
+      # 4. Device Service Build és Push
+      - name: Device Service Build & Push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./device-service
+          platforms: linux/amd64
+          push: true
+          tags: selod/iot-device-service:latest
+
+      # 5. Telemetry Service Build és Push
+      - name: Telemetry Service Build & Push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./telemetry-service
+          platforms: linux/amd64
+          push: true
+          tags: selod/iot-telemetry-service:latest
+
+      # 6. Belépés a Hetzner szerverre és telepítés (Deploy)
+      - name: Deploy to Hetzner
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HETZNER_HOST }}
+          username: root
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          script: |
+            cd ~/iot-capstone
+            git pull origin main
+            
+            # K8s konfigurációk frissítése
+            kubectl apply -f k8s/
+            
+            # Arra kényszerítjük a Kubernetes-t, hogy húzza le az új Docker image-eket és induljon újra
+            kubectl rollout restart deployment device-app-deployment
+            kubectl rollout restart deployment telemetry-app-deployment
