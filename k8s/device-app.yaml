@@ -1,0 +1,63 @@
+# 1. Olvasható konfiguráció (ConfigMap) nem titkos adatoknak
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: device-app-config
+data:
+  PORT: "3000"
+
+---
+# 2. A Te Alkalmazásod (Deployment)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: device-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: device-service
+  template:
+    metadata:
+      labels:
+        app: device-service
+    spec:
+      containers:
+      - name: device-service
+        # Itt már a te általad feltöltött image-et használjuk!
+        image: SorbanElod/iot-device-service:v1
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: device-app-config
+              key: PORT
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: device-db-secret
+              key: MONGO_URI
+        # Ellenőrzi, hogy él-e az appod
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+---
+# 3. Alkalmazás Belső Hálózat (Service)
+apiVersion: v1
+kind: Service
+metadata:
+  name: device-app-service
+spec:
+  selector:
+    app: device-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP
