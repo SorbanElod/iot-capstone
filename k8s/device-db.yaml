@@ -1,16 +1,4 @@
-# 1. Titkos konfiguráció (Secret) az adatbázis jelszavaknak
-apiVersion: v1
-kind: Secret
-metadata:
-  name: device-db-secret
-type: Opaque
-stringData: # A K8s automatikusan base64 kódolásba teszi a stringData-t
-  MONGO_ROOT_USER: "admin"
-  MONGO_ROOT_PASSWORD: "MesteriPassword123!"
-  MONGO_URI: "mongodb://admin:MesteriPassword123!@device-db-service:27017/device_db?authSource=admin"
-
----
-# 2. Adatbázis Konténer (Deployment)
+# 1. Adatbázis Konténer (Deployment)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -43,7 +31,7 @@ spec:
               key: MONGO_ROOT_PASSWORD
 
 ---
-# 3. Adatbázis Belső Hálózat (Service)
+# 2. Adatbázis Belső Hálózat (Service)
 apiVersion: v1
 kind: Service
 metadata:
