@@ -28,7 +28,7 @@ export default function DeviceList({
               <tr>
                 <th className="p-4 font-semibold text-slate-600">ID</th>
                 <th className="p-4 font-semibold text-slate-600">Név</th>
-                <th className="p-4 font-semibold text-slate-600">Helyszín</th>
+                <th className="p-4 font-semibold text-slate-600">Szoba</th>
               </tr>
             </thead>
             <tbody>
@@ -43,7 +43,7 @@ export default function DeviceList({
                   <tr key={d.device_id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                     <td className="p-4 font-mono text-sm text-blue-600">{d.device_id}</td>
                     <td className="p-4">{d.name}</td>
-                    <td className="p-4 text-slate-500">{d.location}</td>
+                    <td className="p-4 text-slate-500">{d.room}</td>
                   </tr>
                 ))
               )}
