@@ -1,0 +1,61 @@
+# 1. A React Frontend Alkalmazás (Deployment)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-service
+  template:
+    metadata:
+      labels:
+        app: frontend-service
+    spec:
+      containers:
+      - name: frontend-service
+        image: selod/iot-frontend:latest
+        ports:
+        - containerPort: 80
+        # Nginx healthcheck (nagyon gyorsan reagál)
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 2
+          periodSeconds: 10
+
+---
+# 2. Frontend Belső Hálózat (Service)
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-app-service
+spec:
+  selector:
+    app: frontend-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+
+---
+# 3. Külvilág felé nyitás (Az Ingress most a főoldalra, a "/" útvonalra mutat!)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+spec:
+  ingressClassName: traefik
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-app-service
+            port:
+              number: 80

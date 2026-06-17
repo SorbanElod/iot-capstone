@@ -54,7 +54,16 @@ jobs:
           push: true
           tags: selod/iot-rule-engine:latest
 
-      # 7. Belépés a Hetzner szerverre és telepítés (Deploy)
+      # 7. Frontend Build és Push
+      - name: Frontend Service Build & Push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend-service
+          platforms: linux/amd64
+          push: true
+          tags: selod/iot-frontend:latest
+
+      # 8. Belépés a Hetzner szerverre és telepítés (Deploy)
       - name: Deploy to Hetzner
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -72,3 +81,4 @@ jobs:
             kubectl rollout restart deployment device-app-deployment
             kubectl rollout restart deployment telemetry-app-deployment
             kubectl rollout restart deployment rule-app-deployment
+            kubectl rollout restart deployment frontend-app-deployment
