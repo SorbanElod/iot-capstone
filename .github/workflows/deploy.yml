@@ -44,8 +44,17 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: selod/iot-telemetry-service:latest
+      
+      # 6. Rule Engine Build és Push
+      - name: Rule Engine Build & Push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./rule-engine-service
+          platforms: linux/amd64
+          push: true
+          tags: selod/iot-rule-engine:latest
 
-      # 6. Belépés a Hetzner szerverre és telepítés (Deploy)
+      # 7. Belépés a Hetzner szerverre és telepítés (Deploy)
       - name: Deploy to Hetzner
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -62,3 +71,4 @@ jobs:
             # Arra kényszerítjük a Kubernetes-t, hogy húzza le az új Docker image-eket és induljon újra
             kubectl rollout restart deployment device-app-deployment
             kubectl rollout restart deployment telemetry-app-deployment
+            kubectl rollout restart deployment rule-app-deployment

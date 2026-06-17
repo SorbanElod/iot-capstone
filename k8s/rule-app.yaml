@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rule-app-config
+data:
+  PORT: "3002"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rule-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rule-service
+  template:
+    metadata:
+      labels:
+        app: rule-service
+    spec:
+      containers:
+      - name: rule-service
+        image: selod/iot-rule-engine:latest
+        ports:
+        - containerPort: 3002
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: rule-app-config
+              key: PORT
+        - name: REDIS_URL
+          # Egyszerűség kedvéért jelszó nélkül, közvetlenül a Service nevén hívjuk
+          value: "redis://rule-db-service:6379"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3002
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rule-app-service
+spec:
+  selector:
+    app: rule-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3002
+  type: ClusterIP
+---
+# Külső elérés csak a szabályok beállításához és a riasztások lekéréséhez
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rule-ingress
+spec:
+  ingressClassName: traefik
+  rules:
+  - http:
+      paths:
+      - path: /api/rules
+        pathType: Prefix
+        backend:
+          service:
+            name: rule-app-service
+            port:
+              number: 80
+      - path: /api/alerts
+        pathType: Prefix
+        backend:
+          service:
+            name: rule-app-service
+            port:
+              number: 80
