@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const app = express();
 app.use(express.json());
 
-// Környezeti változókból olvassuk be a portot és az adatbázis URL-t
+// Környezeti változókból beolvassuk a portot és az adatbázis URL-t
 const PORT = process.env.PORT || 3000;
 const MONGO_URI =
   process.env.MONGO_URI || "mongodb://localhost:27017/device_db";
