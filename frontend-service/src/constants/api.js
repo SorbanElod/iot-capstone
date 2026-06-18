@@ -7,4 +7,4 @@ export const API_ENDPOINTS = {
 };
 
 // Default API configuration
-export const DEFAULT_API_URL = "http://167.233.130.203/";
+export const DEFAULT_API_URL = "http://api.167.233.130.203.nip.io/";
