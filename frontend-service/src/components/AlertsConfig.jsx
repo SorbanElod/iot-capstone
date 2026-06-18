@@ -6,7 +6,8 @@ export default function AlertsConfig({
   setNewLimit,
   alerts,
   fetchAlertsAndRules,
-  handleUpdateLimit
+  handleUpdateLimit,
+  handleClearAlerts
 }) {
   return (
     <div className="animate-fade-in w-full">
@@ -48,13 +49,21 @@ export default function AlertsConfig({
             <h3 className="text-lg font-bold text-red-800 flex items-center gap-2">
               <AlertTriangle size={20} /> Aktív Riasztások
             </h3>
-            <button 
-              onClick={fetchAlertsAndRules} 
-              className="text-red-500 hover:text-red-700 transition-colors"
-              aria-label="Riasztások frissítése"
-            >
-              <RefreshCw size={18} />
-            </button>
+            <div className="flex gap-2">
+              <button 
+                onClick={handleClearAlerts} 
+                className="text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-lg transition-colors font-medium"
+              >
+                Összes törlése
+              </button>
+              <button 
+                onClick={fetchAlertsAndRules} 
+                className="text-red-500 hover:text-red-700 transition-colors"
+                aria-label="Riasztások frissítése"
+              >
+                <RefreshCw size={18} />
+              </button>
+            </div>
           </div>
           
           <div className="p-0 max-h-[500px] overflow-y-auto">

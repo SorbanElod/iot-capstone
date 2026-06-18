@@ -7,7 +7,7 @@ import ErrorAlert from './components/ErrorAlert';
 
 export default function App() {
   // Állapotok (State)
-  const apiUrl = "http://167.233.130.203/";
+  const apiUrl = "http://167.233.130.203";
   const [activeTab, setActiveTab] = useState('devices');
   
   // Adatok
@@ -131,6 +131,20 @@ export default function App() {
       fetchAlertsAndRules();
     } catch { setError('Hiba a szabály frissítésekor'); }
   }; 
+ 
+  const handleClearAlerts = async () => {
+    if (!window.confirm('Biztosan törölni szeretnéd az összes riasztást?')) return;
+    try {
+      const res = await fetch(`${apiUrl}/api/alerts`, { method: 'DELETE' });
+      if (res.ok) {
+        fetchAlertsAndRules();
+      } else {
+        setError('Hiba történt a riasztások törlésekor');
+      }
+    } catch {
+      setError('Hálózati hiba a riasztások törlésekor');
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-gray-50 font-sans text-gray-800 flex flex-row">
@@ -188,6 +202,7 @@ export default function App() {
             alerts={alerts}
             fetchAlertsAndRules={fetchAlertsAndRules}
             handleUpdateLimit={handleUpdateLimit}
+            handleClearAlerts={handleClearAlerts}
           />
         )}
 

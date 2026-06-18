@@ -3,17 +3,6 @@ const redis = require("redis");
 
 const app = express();
 app.use(express.json());
-
-const client = require("prom-client");
-
-const collectDefaultMetrics = client.collectDefaultMetrics;
-collectDefaultMetrics({ register: client.register });
-
-app.get("/metrics", async (req, res) => {
-  res.set("Content-Type", client.register.contentType);
-  res.end(await client.register.metrics());
-});
-
 const PORT = process.env.PORT || 3002;
 
 // Kapcsolódás a Redis-hez a K8s belső hálózatán
@@ -88,6 +77,41 @@ app.get("/api/alerts", async (req, res) => {
     res.json(alerts.map((a) => JSON.parse(a)));
   } catch (error) {
     res.status(500).json({ error: "Hiba a lekérdezés során" });
+  }
+});
+
+// API (KÜLSŐ): Összes riasztás törlése
+app.delete("/api/alerts", async (req, res) => {
+  try {
+    await redisClient.del("alerts");
+    res.json({ message: "Összes riasztás törölve." });
+  } catch (error) {
+    res.status(500).json({ error: "Hiba a törlés során" });
+  }
+});
+
+// API (BELSŐ/KÜLSŐ): Egy adott eszköz riasztásainak törlése
+app.delete("/api/alerts/:deviceId", async (req, res) => {
+  const { deviceId } = req.params;
+  try {
+    const alertsStr = await redisClient.lRange("alerts", 0, -1);
+    const alerts = alertsStr.map((a) => JSON.parse(a));
+    const filteredAlerts = alerts.filter((a) => a.device_id !== deviceId);
+
+    // Töröljük a teljes listát, majd visszatöltjük azokat, amiket nem akartunk törölni
+    await redisClient.del("alerts");
+    if (filteredAlerts.length > 0) {
+      const multi = redisClient.multi();
+      for (const alert of filteredAlerts) {
+        multi.rPush("alerts", JSON.stringify(alert));
+      }
+      await multi.exec();
+    }
+    res.json({
+      message: `Riasztások törölve a következő eszközhöz: ${deviceId}`,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Hiba a törlés során" });
   }
 });
 

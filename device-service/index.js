@@ -84,6 +84,7 @@ app.delete("/api/devices/:id", async (req, res) => {
   const deviceId = req.params.id; // Ez az URL-ből jön (pl. sensor-02)
 
   try {
+    // 1. Eszköz törlése a PostgreSQL adatbázisból
     const result = await pool.query(
       "DELETE FROM devices WHERE device_id = $1 RETURNING *",
       [deviceId],
@@ -95,12 +96,26 @@ app.delete("/api/devices/:id", async (req, res) => {
         .json({ error: "A megadott azonosítójú eszköz nem található." });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Eszköz sikeresen törölve.",
-        deletedDevice: result.rows[0],
+    // 2. Riasztások törlése a Rule Engine-ből (K8s belső hálózatán)
+    try {
+      await fetch(`http://rule-app-service:80/api/alerts/${deviceId}`, {
+        method: "DELETE",
       });
+      console.log(
+        `Riasztások törölve a Rule Engine-ből a következőhöz: ${deviceId}`,
+      );
+    } catch (ruleErr) {
+      // Ha a Rule Engine épp nem elérhető, azt csak logoljuk, de az eszköz törlését nem minősítjük hibásnak
+      console.error(
+        "Nem sikerült elérni a Rule Engine-t a riasztások törléséhez:",
+        ruleErr.message,
+      );
+    }
+
+    res.status(200).json({
+      message: "Eszköz és a hozzá tartozó riasztások sikeresen törölve.",
+      deletedDevice: result.rows[0],
+    });
     console.log(`Eszköz törölve: ID ${deviceId}`);
   } catch (error) {
     console.error("Hiba az eszköz törlésekor:", error);
