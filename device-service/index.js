@@ -3,6 +3,16 @@ const { Pool } = require("pg");
 const app = express();
 app.use(express.json());
 
+const client = require("prom-client");
+
+const collectDefaultMetrics = client.collectDefaultMetrics;
+collectDefaultMetrics({ register: client.register });
+
+app.get("/metrics", async (req, res) => {
+  res.set("Content-Type", client.register.contentType);
+  res.end(await client.register.metrics());
+});
+
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL =
   process.env.DATABASE_URL ||
