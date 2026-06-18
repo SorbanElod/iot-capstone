@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: iot-backend-monitor
+  labels:
+    # EZ A KULCS: Enélkül a címke nélkül a Helm-es Prometheus rá se néz erre a fájlra!
+    release: observability
+spec:
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        # Ide beírjuk a 3 backend szervized belső címkéjét:
+        values: 
+          - device-service
+          - telemetry-service
+          - rule-app
+  endpoints:
+  - port: web         # Itt hivatkozunk az 1. lépésben megadott névre
+    path: /metrics
+    interval: 5s     # 5 másodpercenként frissíti a Grafanát

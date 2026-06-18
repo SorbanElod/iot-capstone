@@ -42,7 +42,8 @@ spec:
   selector:
     app: telemetry-service
   ports:
-    - protocol: TCP
+    - name: web
+      protocol: TCP
       port: 80
       targetPort: 3001
   type: ClusterIP

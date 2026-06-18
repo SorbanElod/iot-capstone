@@ -52,7 +52,8 @@ spec:
   selector:
     app: rule-service
   ports:
-    - protocol: TCP
+    - name: web
+      protocol: TCP
       port: 80
       targetPort: 3002
   type: ClusterIP
