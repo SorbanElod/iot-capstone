@@ -1,4 +1,4 @@
-import { Plus, RefreshCw } from 'lucide-react';
+import { Plus, RefreshCw, Trash2 } from 'lucide-react';
 
 export default function DeviceList({ 
   devices, 
@@ -30,12 +30,13 @@ export default function DeviceList({
                 <th className="p-4 font-semibold text-slate-600">ID</th>
                 <th className="p-4 font-semibold text-slate-600">Név</th>
                 <th className="p-4 font-semibold text-slate-600">Szoba</th>
+                <th className="p-4 font-semibold text-slate-600 text-center">Műveletek</th>
               </tr>
             </thead>
             <tbody>
               {devices.length === 0 ? (
                 <tr>
-                  <td colSpan="3" className="p-8 text-center text-slate-500">
+                  <td colSpan="4" className="p-8 text-center text-slate-500">
                     Nincsenek regisztrált eszközök
                   </td>
                 </tr>
@@ -45,13 +46,13 @@ export default function DeviceList({
                     <td className="p-4 font-mono text-sm text-blue-600">{d.device_id}</td>
                     <td className="p-4">{d.name}</td>
                     <td className="p-4 text-slate-500">{d.room}</td>
-                    <td className="p-4">
+                    <td className="p-4 text-center">
                       <button
                         onClick={() => handleDeleteDevice(d.device_id)}
                         className="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-full transition-colors"
                         aria-label="Eszköz törlése"
                       >
-                        <RefreshCw size={20} />
+                        <Trash2 size={20} />
                       </button>
                     </td>
                   </tr>
@@ -82,7 +83,7 @@ export default function DeviceList({
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">
-                Név
+                Név s
               </label>
               <input
                 required
