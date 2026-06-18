@@ -6,6 +6,8 @@ metadata:
     # EZ A KULCS: Enélkül a címke nélkül a Helm-es Prometheus rá se néz erre a fájlra!
     release: observability
 spec:
+  namespaceSelector:
+    any: true
   selector:
     matchExpressions:
       - key: app

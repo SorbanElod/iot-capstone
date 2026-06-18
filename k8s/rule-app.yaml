@@ -48,6 +48,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: rule-app-service
+  labels:
+    app: rule-app
 spec:
   selector:
     app: rule-service
