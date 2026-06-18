@@ -83,7 +83,7 @@ export default function DeviceList({
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">
-                Név s
+                Név
               </label>
               <input
                 required

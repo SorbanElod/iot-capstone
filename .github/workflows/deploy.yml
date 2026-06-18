@@ -78,7 +78,7 @@ jobs:
             kubectl apply -f k8s/
             
             # Arra kényszerítjük a Kubernetes-t, hogy húzza le az új Docker image-eket és induljon újra
-            kubectl rollout restart deployment device-app-deployment
-            kubectl rollout restart deployment telemetry-app-deployment
+            kubectl rollout restart deployment device-service-deployment
+            kubectl rollout restart deployment telemetry-service-deployment
             kubectl rollout restart deployment rule-app-deployment
             kubectl rollout restart deployment frontend-app-deployment
