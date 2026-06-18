@@ -61,7 +61,7 @@ export default function AlertsConfig({
                 className="text-red-500 hover:text-red-700 transition-colors"
                 aria-label="Riasztások frissítése"
               >
-                <RefreshCw size={18} />
+                <RefreshCw size={30} />
               </button>
             </div>
           </div>
