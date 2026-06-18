@@ -5,7 +5,8 @@ export default function DeviceList({
   fetchDevices,
   newDevice,
   setNewDevice,
-  handleAddDevice
+  handleAddDevice,
+  handleDeleteDevice
 }) {
   return (
     <div className="animate-fade-in w-full">
@@ -44,6 +45,15 @@ export default function DeviceList({
                     <td className="p-4 font-mono text-sm text-blue-600">{d.device_id}</td>
                     <td className="p-4">{d.name}</td>
                     <td className="p-4 text-slate-500">{d.room}</td>
+                    <td className="p-4">
+                      <button
+                        onClick={() => handleDeleteDevice(d.device_id)}
+                        className="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-full transition-colors"
+                        aria-label="Eszköz törlése"
+                      >
+                        <RefreshCw size={20} />
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}

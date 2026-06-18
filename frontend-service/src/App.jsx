@@ -81,6 +81,30 @@ export default function App() {
       fetchDevices();
     } catch { setError('Hiba az eszköz hozzáadásakor'); }
   };
+  
+  const handleDeleteDevice = async (deviceId) => {
+    if (!window.confirm(`Biztosan törölni szeretnéd ezt az eszközt: ${deviceId}?`)) return;
+    
+    try {
+      // Mock törlés a felület teszteléséhez
+      setDevices(devices.filter(d => d.device_id !== deviceId));
+      
+      if (selectedDevice === deviceId) {
+        setSelectedDevice('');
+      }
+
+      // Valódi kérés
+      const res = await fetch(`${apiUrl}/api/devices/${deviceId}`, {
+        method: 'DELETE'
+      });
+      
+      if (res.ok) {
+        fetchDevices();
+      }
+    } catch { 
+      // Ignoráljuk a hibát lokálisan
+    }
+  };
 
   const handleSendMetric = async (e) => {
     e.preventDefault();
@@ -135,6 +159,7 @@ export default function App() {
             newDevice={newDevice}
             setNewDevice={setNewDevice}
             handleAddDevice={handleAddDevice}
+            handleDeleteDevice={handleDeleteDevice}
           />
         )}
 
