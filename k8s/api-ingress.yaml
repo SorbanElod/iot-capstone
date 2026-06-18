@@ -2,17 +2,34 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: api-ingress
-  annotations:
-    kubernetes.io/ingress.class: "traefik"
 spec:
+  ingressClassName: traefik
   rules:
-  - host: api.167.233.130.203.nip.io
-    http:
+  - http:
       paths:
-      - path: /api/devices             # Csak a /api/devices útvonalat engedjük be
+      # 1. Device Service útvonala
+      - path: /api/devices
         pathType: Prefix
         backend:
           service:
-            name: device-app-service   # Ez a backend Service neve
+            name: device-app-service
+            port:
+              number: 80
+              
+      # 2. Telemetry Service útvonala
+      - path: /api/telemetry
+        pathType: Prefix
+        backend:
+          service:
+            name: telemetry-app-service  # Ellenőrizd, hogy ez-e a Service pontos neve a telemetry-app.yaml-ben!
+            port:
+              number: 80
+              
+      # 3. Rule Engine Service útvonala
+      - path: /api/rules
+        pathType: Prefix
+        backend:
+          service:
+            name: rule-app-service       # Ellenőrizd, hogy ez-e a Service pontos neve a rule-app.yaml-ben!
             port:
               number: 80

@@ -7,7 +7,7 @@ import ErrorAlert from './components/ErrorAlert';
 
 export default function App() {
   // Állapotok (State)
-  const apiUrl = "http://api.167.233.130.203.nip.io/";
+  const apiUrl = "http://167.233.130.203/";
   const [activeTab, setActiveTab] = useState('devices');
   
   // Adatok
