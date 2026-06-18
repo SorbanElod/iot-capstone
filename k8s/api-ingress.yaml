@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-ingress
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+  - host: api.167.233.130.203.nip.io
+    http:
+      paths:
+      - path: /api/devices             # Csak a /api/devices útvonalat engedjük be
+        pathType: Prefix
+        backend:
+          service:
+            name: device-app-service   # Ez a backend Service neve
+            port:
+              number: 80
